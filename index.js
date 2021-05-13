@@ -17,7 +17,7 @@ exports.generateToken = functions.https.onCall((data)=>{
   // Agora 역할
   let role = RtcRole.SUBSCRIBER;
 
-  //역할이 트루라면 퍼블리셔로 바꾼다.
+  //역할이 트루라면 퍼블리셔로 바꾼다...
   if (data.role == true) {
     role = RtcRole.PUBLISHER;
   }
