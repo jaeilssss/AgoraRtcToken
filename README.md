@@ -1,4 +1,0 @@
-# AgoraRtcToken
-
-
-hihi jason 

@@ -1,5 +1,7 @@
 //firebase funtions 한국 서버로 설정
 const functions = require("firebase-functions").region("asia-northeast3");
+const firebase_tools = require("firebase-tools");
+
 //Agora 액세스 토큰빌더,역할 설정
 const {RtcTokenBuilder, RtcRole} = require("agora-access-token");
 //Agora 앱아이디
@@ -30,8 +32,43 @@ exports.generateToken = functions.https.onCall((data)=>{
   const privilegeExpireTime = currentTime + expireTime;
   // Agora 토큰
   const token = RtcTokenBuilder.buildTokenWithUid(APP_ID, APP_CERTIFICATE,
-      channelName, uid, role, privilegeExpireTime);
+    channelName, uid, role, privilegeExpireTime);
 
   // json형식으로 token값 반환
   return {"token" : token};
 });
+
+exports.recursiveDelete = functions
+  .runWith({
+    timeoutSeconds: 540,
+    memory: '2GB'
+  })
+  .https.onCall(async (data) => {
+    // Only allow admin users to execute this function.
+    // if (!(context.auth && context.auth.token && context.auth.token.admin)) {
+    //   throw new functions.https.HttpsError(
+    //     'permission-denied',
+    //     'Must be an administrative user to initiate delete.'
+    //   );
+    // }
+
+    const path = data.path;
+    console.log(
+      // `User ${context.auth.uid} has requested to delete path ${path}`
+      'test'
+    );
+
+    // Run a recursive delete on the given document or collection path.
+    // The 'token' must be set in the functions config, and can be generated
+    // at the command line by running 'firebase login:ci'.
+    await firebase_tools.firestore
+      .delete(path, {
+        project: process.env.GCLOUD_PROJECT,
+        recursive: true,
+        yes: true,
+      });
+
+    return {
+      path: path
+    };
+  });
