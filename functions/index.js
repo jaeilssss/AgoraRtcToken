@@ -35,3 +35,4 @@ exports.generateToken = functions.https.onCall((data)=>{
   // json형식으로 token값 반환
   return {"token" : token};
 });
+//git test
